@@ -1,0 +1,75 @@
+name: Harvest and Deploy
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Weekly on Sundays at midnight UTC
+  workflow_dispatch:
+    inputs:
+      api_delay:
+        description: 'Delay in milliseconds between API requests (100–10000)'
+        type: number
+        default: 1000
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run harvest script
+        id: harvest
+        env:
+          API_DELAY: ${{ github.event.inputs.api_delay || '1000' }}
+        run: node scripts/harvest.js
+
+      - name: Check for data changes and commit
+        if: success()
+        run: |
+          git diff --quiet data/word_frequencies.json || {
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/
+            git commit -m "Update word frequency data [skip ci]"
+            git push
+          }
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: harvest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p _deploy
+          cp -r site/* _deploy/
+          cp -r data _deploy/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _deploy
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
