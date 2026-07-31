@@ -1,0 +1,71 @@
+:root {
+  --color-1: #4fc3f7;
+  --color-2: #aed581;
+  --color-3: #fff176;
+  --color-4: #ff8a65;
+  --color-5: #ce93d8;
+  --color-6: #80cbc4;
+  --color-7: #ef5350;
+  --color-8: #42a5f5;
+  --bg-color: #1a1a2e;
+  --error-color: #ef5350;
+  --error-bg: rgba(239, 83, 80, 0.1);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#word-cloud {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#word-cloud a {
+  position: absolute;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+#word-cloud a:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+#word-cloud a:nth-child(8n+1) { color: var(--color-1); }
+#word-cloud a:nth-child(8n+2) { color: var(--color-2); }
+#word-cloud a:nth-child(8n+3) { color: var(--color-3); }
+#word-cloud a:nth-child(8n+4) { color: var(--color-4); }
+#word-cloud a:nth-child(8n+5) { color: var(--color-5); }
+#word-cloud a:nth-child(8n+6) { color: var(--color-6); }
+#word-cloud a:nth-child(8n+7) { color: var(--color-7); }
+#word-cloud a:nth-child(8n+8) { color: var(--color-8); }
+
+#error-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--error-color);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  max-width: 400px;
+}
+
+#error-message[hidden] {
+  display: none;
+}
