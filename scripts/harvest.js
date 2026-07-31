@@ -59,10 +59,33 @@ const REQUEST_HEADERS = {
 async function fetchWithRetry(url) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
+      // Debug: log the full request details
+      console.log(`\n--- DEBUG REQUEST ---`);
+      console.log(`URL: ${url}`);
+      console.log(`Method: GET`);
+      console.log(`Request Headers:`);
+      for (const [key, value] of Object.entries(REQUEST_HEADERS)) {
+        console.log(`  ${key}: ${value}`);
+      }
+      console.log(`---`);
+
       const response = await fetch(url, { headers: REQUEST_HEADERS });
 
+      // Debug: log the full response details
+      console.log(`\n--- DEBUG RESPONSE ---`);
+      console.log(`Status: ${response.status} ${response.statusText}`);
+      console.log(`Response Headers:`);
+      response.headers.forEach((value, key) => {
+        console.log(`  ${key}: ${value}`);
+      });
+
+      const responseBody = await response.text();
+      console.log(`Response Body (first 2000 chars):`);
+      console.log(responseBody.substring(0, 2000));
+      console.log(`--- END DEBUG ---\n`);
+
       if (response.ok) {
-        return await response.json();
+        return JSON.parse(responseBody);
       }
 
       if (response.status >= 400 && response.status < 500) {
