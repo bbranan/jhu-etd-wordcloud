@@ -44,6 +44,11 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const REQUEST_HEADERS = {
+  'User-Agent': 'jhu-etd-wordcloud/1.0 (https://github.com/bbranan/jhu-etd-wordcloud)',
+  'Accept': 'application/json'
+};
+
 /**
  * Fetch with retry logic.
  * Retries on 5xx/network errors up to 3 times with exponential backoff (1s, 2s, 4s).
@@ -54,7 +59,7 @@ function sleep(ms) {
 async function fetchWithRetry(url) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { headers: REQUEST_HEADERS });
 
       if (response.ok) {
         return await response.json();
