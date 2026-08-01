@@ -164,7 +164,7 @@
   }
 
   // Fetch data and render
-  fetch('../data/word_frequencies.json')
+  fetch('data/word_frequencies.json')
     .then(function (response) {
       if (!response.ok) {
         throw new Error('HTTP error: ' + response.status);
